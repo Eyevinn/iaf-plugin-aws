@@ -1,0 +1,15 @@
+{
+  "name": "@eyevinn/iaf-plugin-aws",
+  "version": "0.1.0",
+  "description": "Ingest application framework plugin for upload and transcode in AWS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eyevinn Technology <work@eyevinn.se>",
+  "contributors": [
+    "Jonas Birmé <jonas.birme@eyevinn.se> (Eyevinn Technology AB)",
+    "Fredrik Lundkvist <fredrik.lundkvist@eyevinn.se> (Eyevinn Technology AB)"
+  ],
+  "license": "MIT"
+}
