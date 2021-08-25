@@ -1,0 +1,73 @@
+{
+  "Settings": {
+    "Inputs": [
+      {
+        "TimecodeSource": "ZEROBASED",
+        "VideoSelector": {
+          "ColorSpace": "FOLLOW"
+        },
+        "AudioSelectors": {
+          "Audio Selector 1": {
+            "DefaultSelection": "DEFAULT"
+          }
+        }
+      }
+    ],
+    "OutputGroups": [
+      {
+        "Name": "Apple HLS",
+        "Outputs": [
+          {
+            "ContainerSettings": {
+              "Container": "M3U8",
+              "M3u8Settings": {}
+            },
+            "VideoDescription": {
+              "CodecSettings": {
+                "Codec": "H_264",
+                "H264Settings": {
+                  "FramerateControl": "INITIALIZE_FROM_SOURCE",
+                  "RateControlMode": "QVBR",
+                  "SceneChangeDetect": "TRANSITION_DETECTION",
+                  "QualityTuningLevel": "MULTI_PASS_HQ"
+                }
+              }
+            },
+            "AudioDescriptions": [
+              {
+                "CodecSettings": {
+                  "Codec": "AAC",
+                  "AacSettings": {
+                    "Bitrate": 192000,
+                    "CodingMode": "CODING_MODE_2_0",
+                    "SampleRate": 48000
+                  }
+                }
+              }
+            ],
+            "OutputSettings": {
+              "HlsSettings": {}
+            }
+          }
+        ],
+        "OutputGroupSettings": {
+          "Type": "HLS_GROUP_SETTINGS",
+          "HlsGroupSettings": {
+            "SegmentLength": 10,
+            "Destination": "PLACEHOLDER",
+            "MinSegmentLength": 0
+          }
+        },
+        "AutomatedEncodingSettings": {
+          "AbrSettings": {
+            "MaxAbrBitrate": 5000000
+          }
+        }
+      }
+    ],
+    "TimecodeConfig": {
+      "Source": "ZEROBASED"
+    }
+  },
+  "Role": "arn:aws:iam::590877988961:role/MediaConvert_Default_Role"
+}
