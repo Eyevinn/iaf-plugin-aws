@@ -1,6 +1,6 @@
 import { CreateJobCommand, MediaConvertClient } from "@aws-sdk/client-mediaconvert";
 import { toPascalCase } from "./utils/stringManipulations";
-import { TranscodeDispatcher } from "../interfaces";
+import { TranscodeDispatcher } from "./types/interfaces";
 import winston from "winston";
 
 import * as emcJob from '../resources/exampleJob.json';

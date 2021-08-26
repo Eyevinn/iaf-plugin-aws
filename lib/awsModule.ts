@@ -1,6 +1,6 @@
 import winston from "winston";
 import * as path from 'path'
-import { IafUploadModule } from "../interfaces";
+import { IafUploadModule } from './types/interfaces'
 import { MediaConvertDispatcher } from "./mediaconvertDispatcher";
 import { S3Uploader } from "./s3Uploader";
 import { Readable } from "stream";

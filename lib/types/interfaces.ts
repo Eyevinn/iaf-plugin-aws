@@ -1,18 +1,18 @@
 import { Readable } from "stream";
 import winston from "winston";
 
-interface IafUploadModule {
+export interface IafUploadModule {
     logger: winston.Logger;
     onFileAdd(filePath: string, readStream: Readable): any; 
 }
 
-interface Uploader{
+export interface Uploader{
     destination: string;
     logger: winston.Logger
     upload(fileStream: Readable, fileName: String)
 }
 
-interface TranscodeDispatcher {
+export interface TranscodeDispatcher {
     encodeParams: any,
     inputLocation: string
     outputDestination: string,
@@ -20,7 +20,7 @@ interface TranscodeDispatcher {
     dispatch(fileName: string): Promise<any>
 }
 
-interface FileWatcher {
+export interface FileWatcher {
     dirName: String;
     logger: winston.Logger;
     onAdd(callback: (filePath: string, readStream: Readable) => any)

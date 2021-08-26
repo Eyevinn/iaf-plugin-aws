@@ -5,8 +5,10 @@
       "target": "es6",
       "moduleResolution": "node",
       "sourceMap": true,
-      "outDir": "build",
-      "resolveJsonModule": true
+      "outDir": "dist",
+      "resolveJsonModule": true,
+      "declaration": true,
+      "declarationDir": "dist/types"
     },
     "lib": ["es2015"]
   }

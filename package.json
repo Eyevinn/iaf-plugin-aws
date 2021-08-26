@@ -2,7 +2,9 @@
   "name": "@eyevinn/iaf-plugin-aws",
   "version": "0.1.0",
   "description": "Ingest application framework plugin for upload and transcode in AWS",
-  "main": "index.js",
+  "main": "./dist/lib/awsModule.js",
+  "types": "./dist/types/lib/awsModule.d.ts",
+  "prepublish": "tsc",
   "scripts": {
     "test": "jest"
   },

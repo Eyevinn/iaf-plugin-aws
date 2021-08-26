@@ -1,5 +1,5 @@
 
-import { Uploader } from "../interfaces";
+import { Uploader } from "./types/interfaces";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client, S3 } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
