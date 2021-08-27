@@ -1,17 +1,17 @@
 # IAF Plugin AWS
 
-An ingest application framework plugin for uploading and transcoding in AWS.
+The Eyevinn Ingest Application Framework (Eyevinn IAF) is a framework to simplify building VOD ingest applications. A framework of open source plugins to integrate with various transcoding and streaming providers. This is the plugin for uploading to an S3 bucket and transcoding with AWS MediaConvert and placing the output on another S3 bucket.
 
 ## Installation
+
+To install the plugin in your project, run the following command.
 
 ```
 npm install --save @eyevinn/iaf-plugin-aws
 ```
 
-## Usage
-
-# Using the module in an IAF application
-To use the AWS upload module in your IAF setup, your `index.ts` should look like this:
+## Using the module in your application based on Eyevinn IAF
+To use the AWS upload module in your Eyevinn IAF setup, your `index.ts` should look like this:
 ```TypeScript
 // other imports
 import {AWSUploadModule} from "@eyevinn/iaf-plugin-aws";
@@ -22,7 +22,7 @@ const fileWatcher = /** initialize your file watcher of choice**/
 fileWatcher.onAdd(awsUploader.onFileAdd);
 ```
 
-# Interface Documentation
+# Plugin Documentation
 
 ## `AWSUploadModule`
 Default plugin export. This class is plug-and-play with the Ingest Application Framework, as described in the prevous section.
