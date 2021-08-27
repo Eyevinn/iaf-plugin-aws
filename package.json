@@ -4,9 +4,9 @@
   "description": "Ingest application framework plugin for upload and transcode in AWS",
   "main": "./dist/lib/awsModule.js",
   "types": "./dist/types/lib/awsModule.d.ts",
-  "prepublish": "tsc",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc"
   },
   "author": "Eyevinn Technology <work@eyevinn.se>",
   "contributors": [
