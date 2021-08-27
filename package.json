@@ -1,17 +1,31 @@
 {
   "name": "@eyevinn/iaf-plugin-aws",
-  "version": "0.1.0",
-  "description": "Ingest application framework plugin for upload and transcode in AWS",
+  "version": "0.0.1",
+  "description": "Ingest application framework (IAF) plugin for upload and transcode in AWS",
   "main": "./dist/lib/awsModule.js",
-  "types": "./dist/types/lib/awsModule.d.ts",
-  "prepublish": "tsc",
+  "types": "./dist/lib/types/interfaces.d.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "rm -rf dist/ && tsc",
+    "postversion": "git push && git push --tags"
   },
+  "files": [
+    "dist"
+  ],
   "author": "Eyevinn Technology <work@eyevinn.se>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eyevinn/iaf-plugin-aws.git"
+  },
   "contributors": [
     "Jonas Birmé <jonas.birme@eyevinn.se> (Eyevinn Technology AB)",
     "Fredrik Lundkvist <fredrik.lundkvist@eyevinn.se> (Eyevinn Technology AB)"
+  ],
+  "keywords": [
+    "aws",
+    "mediaconvert",
+    "ingest",
+    "plugin"
   ],
   "license": "MIT",
   "devDependencies": {
