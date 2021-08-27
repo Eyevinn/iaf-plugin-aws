@@ -3,7 +3,7 @@
   "version": "0.0.7",
   "description": "Eyevinn Ingest Application Framework (IAF) plugin for upload and transcode in AWS",
   "main": "./dist/lib/awsModule.js",
-  "types": "./dist/lib/types/interfaces.d.ts",
+  "types": "./dist/types/lib/awsModule.d.ts",
   "scripts": {
     "test": "jest",
     "build": "rm -rf dist/ && tsc",
