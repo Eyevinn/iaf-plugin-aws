@@ -10,10 +10,55 @@ npm install --save @eyevinn/iaf-plugin-aws
 
 ## Usage
 
+# Using the module in an IAF application
+To use the AWS upload module in your IAF setup, your `index.ts` should look like this:
+```TypeScript
+// other imports
+import {AWSUploadModule} from "@eyevinn/iaf-plugin-aws";
+
+const awsUploader = new AWSUploadModule(/** args **/);
+const fileWatcher = /** initialize your file watcher of choice**/
+
+fileWatcher.onAdd(awsUploader.onFileAdd);
+```
+
 # Interface Documentation
 
-TODO:
+## `AWSUploadModule`
+Default plugin export. This class is plug-and-play with the Ingest Application Framework, as described in the prevous section.
 
+### Methods
+`constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, logger: winston.Logger)`
+
+Creates a new `AWSUploadModule` object. You need to provide the unique part your mediaconvert endpoint URL, which AWS region it is running in, as well as the name of your ingest and output buckets. A winston logger is also needed. These parameters are used to initialize the sub-modules.
+
+`onFileAdd = (filePath: string, readStream: Readable)`. 
+
+Method that is executed when a file is added to the directory being watched. `filePath` is the full path to the added file, and `readStream` is a `Readable` stream of the file data. Any file watcher plugins are *required* to provide these. The method uploads the file to the `ingestBucket` specified in the constructor, and dispatches a transcoding job to the MediaConvert endpoint once the upload is completed.
+
+## `S3Uploader`
+Sub-module that handles uploading files to ingest S3 bucket. It's built on top of `@aws-sdk/lib-storage` in order to upload large files, which is essential for video.
+
+### Methods
+`constructor(destination: string, logger: winston.Logger)`
+
+Instantiates a new `S3Uploader`. `destination` is the name of the ingest bucket (the same as `ingestBucket` in the `AWSUploadModule` constructor). `logger` is injected into the object, in order to avoid multiple logger objects.
+
+`async upload(fileStream: Readable, fileName: string)`
+
+Uploads a file to S3. The file data should be provided in the form of a `Readable` stream for performance reasons. `filename` will also be the key used in the S3 bucket.
+
+## `MediaConvertDispatcher`
+Sub-module that dispatches MediaConvert transcoding jobs.
+
+### Methods
+`constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, logger: winston.Logger)`
+
+Instantiates a new `MediaConverDispatcher`. logging is injected in order to avoid multiple logging objects.
+
+`async dispatch(fileName: string)`
+
+Dispatches a MediaConverter transcoding job. Jobs are executed with the settings specified in `resources/exampleJob.json`, and are in MediaConvert job format. `fileName` is the S3 key for the input file.
 # [Contributing](CONTRIBUTING.md)
 
 In addition to contributing code, you can help to triage issues. This can include reproducing bug reports, or asking for vital information such as version numbers or reproduction instructions.
