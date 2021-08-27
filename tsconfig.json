@@ -7,8 +7,7 @@
       "sourceMap": true,
       "outDir": "dist",
       "resolveJsonModule": true,
-      "declaration": true,
-      "declarationDir": "dist/types"
+      "declaration": true
     },
     "lib": ["es2015"]
   }
