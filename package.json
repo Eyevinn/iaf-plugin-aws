@@ -6,6 +6,7 @@
   "types": "./dist/lib/types/interfaces.d.ts",
   "scripts": {
     "test": "jest",
+    "prepublishOnly": "tsc",
     "build": "rm -rf dist/ && tsc",
     "postversion": "git push && git push --tags"
   },
