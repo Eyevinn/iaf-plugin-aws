@@ -3,7 +3,7 @@ import { toPascalCase } from "./utils/stringManipulations";
 import { TranscodeDispatcher } from "./types/interfaces";
 import winston from "winston";
 
-import * as emcJob from '../resources/exampleJob.json';
+import emcJobTemplate from '../resources/exampleJob.json';
 
 export class MediaConvertDispatcher implements TranscodeDispatcher {
     encodeParams: any;
@@ -24,7 +24,7 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
      * @param logger a logger object
      */
     constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, logger: winston.Logger) {
-        this.encodeParams = emcJob;
+        this.encodeParams = emcJobTemplate;
         this.inputLocation = inputLocation;
         this.outputDestination = outputDestination;
         this.mediaConverterEndpoint = {
