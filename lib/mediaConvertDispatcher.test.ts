@@ -23,7 +23,7 @@ jest.mock('winston', () => ({
 
 
 const mcMock = mockClient(MediaConvertClient);
-const dispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", winston.createLogger());
+const dispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket","fakeARN", winston.createLogger());
 
 
 
