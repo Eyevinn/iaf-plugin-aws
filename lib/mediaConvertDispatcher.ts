@@ -3,7 +3,7 @@ import { toPascalCase } from "./utils/stringManipulations";
 import { TranscodeDispatcher } from "./types/interfaces";
 import winston from "winston";
 
-import * as emcJob from '../resources/exampleJob.json';
+import emcJobTemplate from '../resources/exampleJob.json';
 
 export class MediaConvertDispatcher implements TranscodeDispatcher {
     encodeParams: any;
@@ -11,15 +11,26 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
     mediaConverterClient: MediaConvertClient;
     inputLocation: string;
     outputDestination: string;
+    roleArn: string;
     logger: winston.Logger;
 
-    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, logger: winston.Logger) {
-        this.encodeParams = emcJob;
+    /**
+     * Initializes a MediaConvertDispatcher
+     * @param mediaConvertEndpoint the unique part of the endpoint to the mediaconvert instance
+     * @param region the AWS region
+     * @param inputLocation the S3 bucket containing the input files
+     * @param outputDestination the S3 bucket where the results should be placed
+     * @param roleArn the role ARN string for AWS
+     * @param logger a logger object
+     */
+    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, logger: winston.Logger) {
+        this.encodeParams = emcJobTemplate;
         this.inputLocation = inputLocation;
         this.outputDestination = outputDestination;
         this.mediaConverterEndpoint = {
             endpoint: `https://${mediaConvertEndpoint}.mediaconvert.${region}.amazonaws.com`
         }
+        this.roleArn = roleArn;
         this.logger = logger;
         this.mediaConverterClient = new MediaConvertClient(this.mediaConverterEndpoint);
     }
@@ -31,6 +42,7 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
      */
     async dispatch(fileName: string) {
         // start by setting the correct input and destination
+        this.encodeParams["Role"] = this.roleArn;
         this.encodeParams["Settings"]["Inputs"].map(input => input["FileInput"] = `s3://${this.inputLocation}/${fileName}`);
         this.encodeParams["Settings"]["OutputGroups"].map(group => {
             const groupName = group["OutputGroupSettings"]["Type"]

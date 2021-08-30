@@ -69,5 +69,5 @@
       "Source": "ZEROBASED"
     }
   },
-  "Role": "arn:aws:iam::590877988961:role/MediaConvert_Default_Role"
+  "Role": "PLACEHOLDER"
 }

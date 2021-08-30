@@ -11,10 +11,10 @@ export class AwsUploadModule implements IafUploadModule {
     dispatcher: MediaConvertDispatcher;
 
 
-    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, logger: winston.Logger) {
+    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, logger: winston.Logger) {
         this.logger = logger;
         this.uploader = new S3Uploader(ingestBucket, this.logger);
-        this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, this.logger);
+        this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, roleArn, this.logger);
     }
 
     /**
