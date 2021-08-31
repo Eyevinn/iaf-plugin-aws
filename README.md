@@ -28,9 +28,9 @@ fileWatcher.onAdd(awsUploader.onFileAdd);
 Default plugin export. This class is plug-and-play with the Ingest Application Framework, as described in the prevous section.
 
 ### Methods
-`constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, logger: winston.Logger)`
+`constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn:string, playlistName: string, logger: winston.Logger)`
 
-Creates a new `AWSUploadModule` object. You need to provide the unique part your mediaconvert endpoint URL, which AWS region it is running in, as well as the name of your ingest and output buckets. A winston logger is also needed. These parameters are used to initialize the sub-modules.
+Creates a new `AWSUploadModule` object. You need to provide the unique part your mediaconvert endpoint URL, which AWS region it is running in, as well as the name of your ingest and output buckets. You will also need to provide a role ARN, as well as the base name of the generated playlist. A winston logger is also needed. These parameters are used to initialize the sub-modules.
 
 `onFileAdd = (filePath: string, readStream: Readable)`. 
 
@@ -52,9 +52,10 @@ Uploads a file to S3. The file data should be provided in the form of a `Readabl
 Sub-module that dispatches MediaConvert transcoding jobs.
 
 ### Methods
-`constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, logger: winston.Logger)`
+`constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, logger: winston.Logger)`
 
 Instantiates a new `MediaConverDispatcher`. logging is injected in order to avoid multiple logging objects.
+In most cases, the parameters will be passed down to the parent `AwsUploadModule`.
 
 `async dispatch(fileName: string)`
 
