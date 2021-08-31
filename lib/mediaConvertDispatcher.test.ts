@@ -2,9 +2,51 @@ import { mockClient } from 'aws-sdk-client-mock';
 import { CreateJobCommand, MediaConvertClient } from '@aws-sdk/client-mediaconvert';
 import { MediaConvertDispatcher } from './mediaConvertDispatcher';
 import winston from 'winston';
+import * as fs from 'fs';
 const mockLogInstance = {
     debug: jest.fn(),
     log: jest.fn()
+}
+
+jest.mock('fs')
+
+const mockParams = {
+    "Settings": {
+        "Inputs": [
+            {
+
+            }
+        ],
+        "OutputGroups": [
+            {
+                "Name": "testName",
+                "Outputs": [
+                    {
+                        "OutputSettings": {
+                            "HlsSettings": {}
+                        },
+                    }
+                ],
+                "OutputGroupSettings": {
+                    "Type": "HLS_GROUP_SETTINGS",
+                    "HlsGroupSettings": {
+                        "SegmentLength": 10,
+                        "Destination": "PLACEHOLDER",
+                        "MinSegmentLength": 0
+                    }
+                },
+                "AutomatedEncodingSettings": {
+                    "AbrSettings": {
+                        "MaxAbrBitrate": 5000000
+                    }
+                }
+            }
+        ],
+        "TimecodeConfig": {
+            "Source": "ZEROBASED"
+        }
+    },
+    "Role": "placeholder"
 }
 
 jest.mock('winston', () => ({
@@ -21,15 +63,14 @@ jest.mock('winston', () => ({
     }
 }))
 
-
+jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(mockParams))
 const mcMock = mockClient(MediaConvertClient);
-const dispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket","fakeARN", winston.createLogger());
+const dispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", "fakeARN", "playlistName", winston.createLogger());
 
 
 
 beforeEach(() => {
     const logger = winston.createLogger();
-    
     mcMock.reset();
 })
 
@@ -44,6 +85,7 @@ test("Should return transcoding job data on succesful dispatch", async () => {
             Settings: {}
         }
     }
+    //TODO: finish this test
 
     mcMock.on(CreateJobCommand).resolves(mockResp);
     const response = await dispatcher.dispatch("filename");

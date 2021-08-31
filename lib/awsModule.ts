@@ -7,14 +7,16 @@ import { Readable } from "stream";
 
 export class AwsUploadModule implements IafUploadModule {
     logger: winston.Logger;
+    playlistName: string;
     uploader: S3Uploader;
     dispatcher: MediaConvertDispatcher;
 
 
-    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, logger: winston.Logger) {
+    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, logger: winston.Logger) {
         this.logger = logger;
+        this.playlistName = playlistName;
         this.uploader = new S3Uploader(ingestBucket, this.logger);
-        this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, roleArn, this.logger);
+        this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, roleArn, this.playlistName, this.logger);
     }
 
     /**
