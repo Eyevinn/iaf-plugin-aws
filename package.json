@@ -2,11 +2,12 @@
   "name": "@eyevinn/iaf-plugin-aws",
   "version": "0.0.10",
   "description": "Eyevinn Ingest Application Framework (IAF) plugin for upload and transcode in AWS",
-  "main": "./dist/lib/awsModule.js",
-  "types": "./dist/types/lib/awsModule.d.ts",
+  "main": "./dist/awsModule.js",
+  "types": "./dist/types/awsModule.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "rm -rf dist/ && tsc",
+    "copy-files": "copyfiles -u 1 resources/*.json dist/",
+    "build": "rm -rf dist/ && tsc && npm run copy-files",
     "postversion": "git push && git push --tags"
   },
   "files": [
@@ -36,7 +37,9 @@
     "@types/node": "^16.6.1",
     "aws-sdk-client-mock": "^0.5.3",
     "babel-jest": "^27.0.6",
+    "copyfiles": "^2.4.1",
     "jest": "^27.0.6",
+    "rimraf": "^3.0.2",
     "tslint": "^6.1.3",
     "typescript": "^4.3.5"
   },
