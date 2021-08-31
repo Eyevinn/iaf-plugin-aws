@@ -2,6 +2,7 @@ import { CreateJobCommand, MediaConvertClient } from "@aws-sdk/client-mediaconve
 import { toPascalCase } from "./utils/stringManipulations";
 import { TranscodeDispatcher } from "./types/interfaces";
 import * as fs from "fs";
+import * as path from "path"
 import winston from "winston";
 
 
@@ -25,7 +26,7 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
      * @param logger a logger object
      */
     constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, logger: winston.Logger) {
-        this.encodeParams = this.loadEncodeParams('../resources/exampleJob.json');
+        this.encodeParams = this.loadEncodeParams(path.join(__dirname,"..","resources", "exampleJob.json"));
         this.inputLocation = inputLocation;
         this.outputDestination = outputDestination;
         this.mediaConverterEndpoint = {
