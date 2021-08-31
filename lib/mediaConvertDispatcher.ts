@@ -1,9 +1,9 @@
 import { CreateJobCommand, MediaConvertClient } from "@aws-sdk/client-mediaconvert";
 import { toPascalCase } from "./utils/stringManipulations";
 import { TranscodeDispatcher } from "./types/interfaces";
+import * as fs from "fs";
 import winston from "winston";
 
-import emcJobTemplate from '../resources/exampleJob.json';
 
 export class MediaConvertDispatcher implements TranscodeDispatcher {
     encodeParams: any;
@@ -12,6 +12,7 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
     inputLocation: string;
     outputDestination: string;
     roleArn: string;
+    playlistName: string;
     logger: winston.Logger;
 
     /**
@@ -23,14 +24,15 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
      * @param roleArn the role ARN string for AWS
      * @param logger a logger object
      */
-    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, logger: winston.Logger) {
-        this.encodeParams = emcJobTemplate;
+    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, logger: winston.Logger) {
+        this.encodeParams = this.loadEncodeParams('../resources/exampleJob.json');
         this.inputLocation = inputLocation;
         this.outputDestination = outputDestination;
         this.mediaConverterEndpoint = {
             endpoint: `https://${mediaConvertEndpoint}.mediaconvert.${region}.amazonaws.com`
         }
         this.roleArn = roleArn;
+        this.playlistName = playlistName;
         this.logger = logger;
         this.mediaConverterClient = new MediaConvertClient(this.mediaConverterEndpoint);
     }
@@ -47,7 +49,7 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
         this.encodeParams["Settings"]["OutputGroups"].map(group => {
             const groupName = group["OutputGroupSettings"]["Type"]
             const pascaledGroupName = toPascalCase(groupName)
-            group["OutputGroupSettings"][pascaledGroupName]["Destination"] = `s3://${this.outputDestination}/${fileName}/${group["Name"]}`;
+            group["OutputGroupSettings"][pascaledGroupName]["Destination"] = `s3://${this.outputDestination}/${fileName}/${this.playlistName}`;
         })
 
         try {
@@ -65,6 +67,11 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
             })
             throw err;
         }
+    }
+
+    loadEncodeParams(templateFileName: string) {
+        const encodeData = JSON.parse(fs.readFileSync(templateFileName, "utf-8"));
+        return encodeData;
     }
 
 }

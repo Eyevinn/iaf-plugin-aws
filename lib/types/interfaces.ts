@@ -3,6 +3,7 @@ import winston from "winston";
 
 export interface IafUploadModule {
     logger: winston.Logger;
+    playlistName: string;
     onFileAdd(filePath: string, readStream: Readable): any; 
 }
 
@@ -17,6 +18,7 @@ export interface TranscodeDispatcher {
     inputLocation: string
     outputDestination: string,
     logger: winston.Logger;
+    playlistName: string;
     dispatch(fileName: string): Promise<any>
 }
 
