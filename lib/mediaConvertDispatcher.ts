@@ -23,10 +23,11 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
      * @param inputLocation the S3 bucket containing the input files
      * @param outputDestination the S3 bucket where the results should be placed
      * @param roleArn the role ARN string for AWS
+     * @param playlistName the name of the playlist to be created
+     * @param encodeParams the parameters to be used for the transcoding job
      * @param logger a logger object
      */
-    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, logger: winston.Logger) {
-        this.encodeParams = this.loadEncodeParams(path.join(__dirname,"..","resources", "exampleJob.json"));
+    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, encodeParams: string, logger: winston.Logger) {
         this.inputLocation = inputLocation;
         this.outputDestination = outputDestination;
         this.mediaConverterEndpoint = {
@@ -36,6 +37,12 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
         this.playlistName = playlistName;
         this.logger = logger;
         this.mediaConverterClient = new MediaConvertClient(this.mediaConverterEndpoint);
+
+        if (encodeParams) {
+            this.encodeParams = JSON.parse(encodeParams);
+        } else {
+            this.encodeParams = this.loadEncodeParams(path.join(__dirname,"..","resources", "exampleJob.json"));
+        }
     }
 
     /**

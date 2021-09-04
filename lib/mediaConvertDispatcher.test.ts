@@ -65,7 +65,7 @@ jest.mock('winston', () => ({
 
 jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(mockParams))
 const mcMock = mockClient(MediaConvertClient);
-const dispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", "fakeARN", "playlistName", winston.createLogger());
+const dispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", "fakeARN", "playlistName", null, winston.createLogger());
 
 
 
@@ -74,7 +74,7 @@ beforeEach(() => {
     mcMock.reset();
 })
 
-test("Should return transcoding job data on succesful dispatch", async () => {
+test("Should return transcoding job data on successful dispatch", async () => {
     const mockResp = {
         "$metadata": {
             httpStatusCode: 201
@@ -92,8 +92,28 @@ test("Should return transcoding job data on succesful dispatch", async () => {
     expect(response).toStrictEqual(mockResp);
 });
 
+test("Should return transcoding job data on successful dispatch with custom encodeParams", async () => {
+    let encodeParams = JSON.stringify(mockParams);
+    const customDispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", "fakeARN", "playlistName", encodeParams, winston.createLogger());
+    const mockResp = {
+        "$metadata": {
+            httpStatusCode: 201
+        },
+        Job: {
+            Id: "1",
+            Role: "test",
+            Settings: {}
+        }
+    }
+    //TODO: finish this test
+
+    mcMock.on(CreateJobCommand).resolves(mockResp);
+    const response = await customDispatcher.dispatch("filename");
+    expect(response).toStrictEqual(mockResp);
+});
+
 test("Should throw an error when failing to dispatch the job", async () => {
-    const mockErr = "Failed to create trancoding job!"
+    const mockErr = "Failed to create transcoding job!"
     mcMock.on(CreateJobCommand).rejects(mockErr);
     await expect(dispatcher.dispatch("filename"))
         .rejects
