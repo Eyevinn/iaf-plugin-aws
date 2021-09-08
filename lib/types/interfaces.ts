@@ -4,14 +4,15 @@ import winston from "winston";
 export interface IafUploadModule {
     logger: winston.Logger;
     playlistName: string;
-    onFileAdd(filePath: string, readStream: Readable): any; 
+    outputBucket: string;
+    onFileAdd(filePath: string, readStream: Readable): any;
 }
 
 export interface Uploader{
     destination: string;
     logger: winston.Logger
     upload(fileStream: Readable, fileName: String)
-    watcher(target: string)
+    watcher(target: string, bucket: string)
 }
 
 export interface TranscodeDispatcher {

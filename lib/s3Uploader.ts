@@ -61,21 +61,18 @@ export class S3Uploader implements Uploader {
      * @param target The object to watch
      * @returns the response from AWS. If successful, the response will contain the object
      */
-    async watcher(target: string) {
-        const s3Settings = {
-            Bucket: this.destination,
-            client: new S3({}) || new S3Client({}),
-            maxWaitTime: 60000,
-        }
-        const headParams = {
-            Bucket: this.destination,
-            Key: target,
-        };
+    async watcher(target: string, bucket: string) {
+        const Bucket = bucket;
+        const Key = target;
+        const client = new S3({}) || new S3Client({});
 
         try {
-          return await waitUntilObjectExists(s3Settings, headParams);
-        }
-        catch (err) {
+            const data = await waitUntilObjectExists({ client, maxWaitTime: 20 }, { Bucket, Key });
+            this.logger.log({
+                level: 'info',
+                message: `Response: ${JSON.stringify(data)}`
+            });
+        } catch (err) {
             this.logger.log({
                 level: 'error',
                 message: `Watcher failed for target: ${target}`

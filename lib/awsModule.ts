@@ -8,12 +8,14 @@ import { Readable } from "stream";
 export class AwsUploadModule implements IafUploadModule {
     logger: winston.Logger;
     playlistName: string;
+    outputBucket: string;
     uploader: S3Uploader;
     dispatcher: MediaConvertDispatcher;
 
 
     constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, logger: winston.Logger) {
         this.logger = logger;
+        this.outputBucket = outputBucket;
         this.playlistName = playlistName;
         this.uploader = new S3Uploader(ingestBucket, this.logger);
         this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, roleArn, this.playlistName, encodeParams, this.logger);
@@ -25,13 +27,16 @@ export class AwsUploadModule implements IafUploadModule {
      * the upload is completed.
      * @param filePath the path to the file being added.
      * @param readStream ad Readable stream of the file
+     * @returns object containing transcoded object
      */
-    onFileAdd = (filePath: string, readStream: Readable) => {
+    onFileAdd = (filePath: string, readStream: Readable): any =>{
         const fileName = path.basename(filePath);
         try {
-            this.uploader.upload(readStream, fileName).then(() => {
-                this.dispatcher.dispatch(fileName)
-            })
+            //this.uploader.upload(readStream, fileName).then(() => {
+                //this.dispatcher.dispatch(fileName).then(() => {
+            return this.uploader.watcher(fileName, this.outputBucket);
+                //});
+            //});
         }
         catch (err) {
             this.logger.log({
