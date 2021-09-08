@@ -11,11 +11,6 @@ export interface Uploader{
     destination: string;
     logger: winston.Logger
     upload(fileStream: Readable, fileName: String)
-}
-
-export interface Watcher{
-    destination: string;
-    logger: winston.Logger
     watcher(target: string)
 }
 

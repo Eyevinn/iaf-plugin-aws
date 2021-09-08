@@ -1,6 +1,6 @@
 import { Uploader } from "./types/interfaces";
 import { Upload } from "@aws-sdk/lib-storage";
-import { S3Client, S3 } from "@aws-sdk/client-s3";
+import { S3Client, S3, waitUntilObjectExists } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import winston from "winston";
 
@@ -54,6 +54,33 @@ export class S3Uploader implements Uploader {
             });
             throw err;
         }
+    }
 
+    /**
+     * Watches for an object to be uploaded to S3
+     * @param target The object to watch
+     * @returns the response from AWS. If successful, the response will contain the object
+     */
+    async watcher(target: string) {
+        const s3Settings = {
+            Bucket: this.destination,
+            client: new S3({}) || new S3Client({}),
+            maxWaitTime: 60000,
+        }
+        const headParams = {
+            Bucket: this.destination,
+            Key: target,
+        };
+
+        try {
+          return await waitUntilObjectExists(s3Settings, headParams);
+        }
+        catch (err) {
+            this.logger.log({
+                level: 'error',
+                message: `Watcher failed for target: ${target}`
+            });
+            throw err;
+        }
     }
 }
