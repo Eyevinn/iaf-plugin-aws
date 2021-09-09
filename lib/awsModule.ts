@@ -25,19 +25,23 @@ export class AwsUploadModule implements IafUploadModule {
 
     /**
      * Method that runs when a FileWatcher detects a new file.
-     * Uploads the file to an S3 ingress bucket, and dispatches a transcoding job when 
+     * Uploads the file to an S3 ingress bucket, and dispatches a transcoding job when
      * the upload is completed.
      * @param filePath the path to the file being added.
-     * @param readStream ad Readable stream of the file
-     * @returns object containing transcoded object
+     * @param readStream ad Readable stream of the file.
+     * @param fileWatcher a boolean indicating whether a FileWatcher should check if the file has been transcoded and added or not.
+     * @returns — A Promise containing the transcoded objects data.
      */
-    onFileAdd = (filePath: string, readStream: Readable): any => {
+    onFileAdd = (filePath: string, readStream: Readable, fileWatcher: boolean): any => {
         const fileName = path.basename(filePath);
         try {
             this.uploader.upload(readStream, fileName).then(() => {
                 this.dispatcher.dispatch(fileName).then(() => {
                     return new Promise<{}>((resolve, reject) => {
-                        resolve(this.uploader.watcher(fileName, this.outputBucket, this.awsRegion));
+                        if (fileWatcher) {
+                            resolve(this.uploader.watcher(fileName, this.outputBucket, this.awsRegion));
+                        }
+                        resolve({});
                     });
                 });
             });
