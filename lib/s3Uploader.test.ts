@@ -57,7 +57,6 @@ test("Should resolve on a successful upload", async () => {
     mockUploadInstance.done.mockResolvedValueOnce(mockResp);
     const data = await uploader.upload(mockFile().createReadStream, "filename")
     expect(data).toStrictEqual(mockResp)
-    
 })
 
 test("Should throw errors when upload fails", async () => {

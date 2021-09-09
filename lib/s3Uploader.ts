@@ -59,25 +59,37 @@ export class S3Uploader implements Uploader {
     /**
      * Watches for an object to be uploaded to S3
      * @param target The object to watch
-     * @returns the response from AWS. If successful, the response will contain the object
+     * @returns The S3 URLs for the targets master manifests if they have been uploaded successfully
      */
-    async watcher(target: string, bucket: string) {
-        const Bucket = bucket;
-        const Key = target;
+    async watcher(target: string, bucket: string, awsRegion: string) {
         const client = new S3({}) || new S3Client({});
-
-        try {
-            const data = await waitUntilObjectExists({ client, maxWaitTime: 20 }, { Bucket, Key });
-            this.logger.log({
-                level: 'info',
-                message: `Response: ${JSON.stringify(data)}`
-            });
-        } catch (err) {
-            this.logger.log({
-                level: 'error',
-                message: `Watcher failed for target: ${target}`
-            });
-            throw err;
+        const targets = [`${target}/manifest.m3u8`, `${target}/manifest.mpd`];
+        let uploadedAssets = [];
+        let streamURLs = [];
+        // Check for HLS and DASH manifest files
+        for (let i = 0; i < targets.length; i++) {
+            try {
+                this.logger.log({
+                    level: 'info',
+                    message: `Watching for: ${targets[i]}`
+                });
+                await waitUntilObjectExists({ client, maxWaitTime: 60 }, { Bucket: bucket, Key: targets[i] });
+                uploadedAssets.push(targets[i]);
+            } catch (err) {
+                this.logger.log({
+                    level: 'error',
+                    message: `Watcher could not find: [${bucket}][${targets[i]}]`
+                });
+            }
         }
+        // Build streaming url from uploaded manifest
+        uploadedAssets.forEach(e => {
+            streamURLs.push(`https://${bucket}.s3.${awsRegion}.amazonaws.com/${e}`);
+        });
+        this.logger.log({
+            level: 'info',
+            message: `Streaming URLs: ${streamURLs}`
+        });
+        return streamURLs;
     }
 }

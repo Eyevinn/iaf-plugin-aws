@@ -9,6 +9,7 @@ export class AwsUploadModule implements IafUploadModule {
     logger: winston.Logger;
     playlistName: string;
     outputBucket: string;
+    awsRegion: string;
     uploader: S3Uploader;
     dispatcher: MediaConvertDispatcher;
 
@@ -17,6 +18,7 @@ export class AwsUploadModule implements IafUploadModule {
         this.logger = logger;
         this.outputBucket = outputBucket;
         this.playlistName = playlistName;
+        this.awsRegion = awsRegion;
         this.uploader = new S3Uploader(ingestBucket, this.logger);
         this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, roleArn, this.playlistName, encodeParams, this.logger);
     }
@@ -32,11 +34,13 @@ export class AwsUploadModule implements IafUploadModule {
     onFileAdd = (filePath: string, readStream: Readable): any =>{
         const fileName = path.basename(filePath);
         try {
-            //this.uploader.upload(readStream, fileName).then(() => {
-                //this.dispatcher.dispatch(fileName).then(() => {
-            return this.uploader.watcher(fileName, this.outputBucket);
-                //});
-            //});
+            this.uploader.upload(readStream, fileName).then(() => {
+                this.dispatcher.dispatch(fileName).then(() => {
+                    return new Promise<string[]>((resolve, reject) => {
+                        resolve(this.uploader.watcher(fileName, this.outputBucket, this.awsRegion));
+                    })
+                });
+            });
         }
         catch (err) {
             this.logger.log({
@@ -45,5 +49,4 @@ export class AwsUploadModule implements IafUploadModule {
             })
         }
     }
-
 }
