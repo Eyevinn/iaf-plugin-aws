@@ -31,14 +31,14 @@ export class AwsUploadModule implements IafUploadModule {
      * @param readStream ad Readable stream of the file
      * @returns object containing transcoded object
      */
-    onFileAdd = (filePath: string, readStream: Readable): any =>{
+    onFileAdd = (filePath: string, readStream: Readable): any => {
         const fileName = path.basename(filePath);
         try {
             this.uploader.upload(readStream, fileName).then(() => {
                 this.dispatcher.dispatch(fileName).then(() => {
-                    return new Promise<string[]>((resolve, reject) => {
+                    return new Promise<{}>((resolve, reject) => {
                         resolve(this.uploader.watcher(fileName, this.outputBucket, this.awsRegion));
-                    })
+                    });
                 });
             });
         }

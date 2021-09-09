@@ -63,35 +63,35 @@ export class S3Uploader implements Uploader {
      * @param awsRegion The AWS S3 bucket region
      * @returns The S3 URLs for the targets master manifests if they have been uploaded successfully
      */
-    async watcher(target: string, bucket: string, awsRegion: string) {
+     async watcher(target: string, bucket: string, awsRegion: string) {
         const client = new S3({}) || new S3Client({});
-        const targets = [`${target}/manifest.m3u8`, `${target}/manifest.mpd`];
-        let uploadedAssets = [];
-        let streamURLs = [];
+        const targets = {
+            hls: `${target}/manifest.m3u8`,
+            dash: `${target}/manifest.mpd`
+        };
+        let uploadedAssets = {hls: null, dash: null};
         // Check for HLS and DASH manifest files
-        for (let i = 0; i < targets.length; i++) {
+        for (const key in targets) {
+            uploadedAssets["name"] = target;
+            uploadedAssets["source"] = `s3://${bucket}/${target}`;
             try {
                 this.logger.log({
                     level: 'info',
-                    message: `Watching for: ${targets[i]}`
+                    message: `Watching for: ${targets[key]}`
                 });
-                await waitUntilObjectExists({ client, maxWaitTime: 60 }, { Bucket: bucket, Key: targets[i] });
-                uploadedAssets.push(targets[i]);
+                await waitUntilObjectExists({ client, maxWaitTime: 60 }, { Bucket: bucket, Key: targets[key] });
+                uploadedAssets[key] = `https://${bucket}.s3.${awsRegion}.amazonaws.com/${targets[key]}`;
             } catch (err) {
                 this.logger.log({
                     level: 'error',
-                    message: `Watcher could not find: [${bucket}][${targets[i]}]`
+                    message: `Watcher could not find: ${bucket}/${targets[key]}]`
                 });
             }
         }
-        // Build streaming url from uploaded manifest
-        uploadedAssets.forEach(e => {
-            streamURLs.push(`https://${bucket}.s3.${awsRegion}.amazonaws.com/${e}`);
-        });
         this.logger.log({
             level: 'info',
-            message: `Streaming URLs: ${streamURLs}`
+            message: `Streaming URLs: ${JSON.stringify(uploadedAssets)}`
         });
-        return streamURLs;
+        return uploadedAssets;
     }
 }
