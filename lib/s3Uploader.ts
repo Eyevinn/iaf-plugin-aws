@@ -58,7 +58,9 @@ export class S3Uploader implements Uploader {
 
     /**
      * Watches for an object to be uploaded to S3
-     * @param target The object to watch
+     * @param target The folder to watch
+     * @param bucket The AWS bucket
+     * @param awsRegion The AWS S3 bucket region
      * @returns The S3 URLs for the targets master manifests if they have been uploaded successfully
      */
     async watcher(target: string, bucket: string, awsRegion: string) {
