@@ -79,12 +79,12 @@ export class S3Uploader implements Uploader {
                     level: 'info',
                     message: `Watching for: ${targets[key]}`
                 });
-                await waitUntilObjectExists({ client, maxWaitTime: 60 }, { Bucket: bucket, Key: targets[key] });
+                await waitUntilObjectExists({ client, maxWaitTime: 120 }, { Bucket: bucket, Key: targets[key] });
                 uploadedAssets[key] = `https://${bucket}.s3.${awsRegion}.amazonaws.com/${targets[key]}`;
             } catch (err) {
                 this.logger.log({
                     level: 'error',
-                    message: `Watcher could not find: ${bucket}/${targets[key]}]`
+                    message: `Watcher could not find: ${bucket}/${targets[key]}`
                 });
             }
         }

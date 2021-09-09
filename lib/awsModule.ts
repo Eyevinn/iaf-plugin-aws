@@ -32,25 +32,26 @@ export class AwsUploadModule implements IafUploadModule {
      * @param fileWatcher a boolean indicating whether a FileWatcher should check if the file has been transcoded and added or not.
      * @returns — A Promise containing the transcoded objects data.
      */
-    onFileAdd = (filePath: string, readStream: Readable, fileWatcher: boolean): any => {
+    onFileAdd = (filePath: string, readStream: Readable, fileWatcher: boolean): Promise<any> => {
+        return new Promise<{}>((resolve, reject) => {
         const fileName = path.basename(filePath);
-        try {
-            this.uploader.upload(readStream, fileName).then(() => {
-                this.dispatcher.dispatch(fileName).then(() => {
-                    return new Promise<{}>((resolve, reject) => {
+            try {
+                this.uploader.upload(readStream, fileName).then(() => {
+                    this.dispatcher.dispatch(fileName).then(() => {
                         if (fileWatcher) {
                             resolve(this.uploader.watcher(fileName, this.outputBucket, this.awsRegion));
                         }
                         resolve({});
                     });
                 });
-            });
-        }
-        catch (err) {
-            this.logger.log({
-                level: "Error",
-                message: `Error when attempting to process file: ${fileName}. Full error: ${err}`,
-            })
-        }
+            }
+            catch (err) {
+                this.logger.log({
+                    level: "Error",
+                    message: `Error when attempting to process file: ${fileName}. Full error: ${err}`,
+                })
+                reject(err);
+            }
+        });
     }
 }

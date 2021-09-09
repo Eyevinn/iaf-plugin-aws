@@ -6,7 +6,7 @@ export interface IafUploadModule {
     playlistName: string;
     outputBucket: string;
     awsRegion: string;
-    onFileAdd(filePath: string, readStream: Readable, fileWatcher: boolean): any
+    onFileAdd(filePath: string, readStream: Readable, fileWatcher: boolean): Promise<any>
 }
 
 export interface Uploader{
