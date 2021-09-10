@@ -6,14 +6,14 @@ export interface IafUploadModule {
     playlistName: string;
     outputBucket: string;
     awsRegion: string;
-    onFileAdd(filePath: string, readStream: Readable, fileWatcher: boolean): Promise<any>
+    onFileAdd(filePath: string, readStream: Readable): any;
+    fileUploadedDelegate: Function;
 }
 
 export interface Uploader{
     destination: string;
     logger: winston.Logger
     upload(fileStream: Readable, fileName: String)
-    watcher(target: string, bucket: string, awsRegion: string): any
 }
 
 export interface TranscodeDispatcher {

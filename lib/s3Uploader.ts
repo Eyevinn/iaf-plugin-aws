@@ -55,43 +55,4 @@ export class S3Uploader implements Uploader {
             throw err;
         }
     }
-
-    /**
-     * Watches for an object to be uploaded to S3
-     * @param target The folder to watch
-     * @param bucket The AWS bucket
-     * @param awsRegion The AWS S3 bucket region
-     * @returns The S3 URLs for the targets master manifests if they have been uploaded successfully
-     */
-     async watcher(target: string, bucket: string, awsRegion: string) {
-        const client = new S3({}) || new S3Client({});
-        const targets = {
-            hls: `${target}/manifest.m3u8`,
-            dash: `${target}/manifest.mpd`
-        };
-        let uploadedAssets = {hls: null, dash: null};
-        // Check for HLS and DASH manifest files
-        for (const key in targets) {
-            uploadedAssets["name"] = target;
-            uploadedAssets["source"] = `s3://${bucket}/${target}`;
-            try {
-                this.logger.log({
-                    level: 'info',
-                    message: `Watching for: ${targets[key]}`
-                });
-                await waitUntilObjectExists({ client, maxWaitTime: 120 }, { Bucket: bucket, Key: targets[key] });
-                uploadedAssets[key] = `https://${bucket}.s3.${awsRegion}.amazonaws.com/${targets[key]}`;
-            } catch (err) {
-                this.logger.log({
-                    level: 'error',
-                    message: `Watcher could not find: ${bucket}/${targets[key]}`
-                });
-            }
-        }
-        this.logger.log({
-            level: 'info',
-            message: `Streaming URLs: ${JSON.stringify(uploadedAssets)}`
-        });
-        return uploadedAssets;
-    }
 }
