@@ -32,9 +32,9 @@ Default plugin export. This class is plug-and-play with the Ingest Application F
 
 Creates a new `AWSUploadModule` object. You need to provide the unique part your mediaconvert endpoint URL, which AWS region it is running in, as well as the name of your ingest and output buckets. You will also need to provide a role ARN, as well as the base name of the generated playlist. A winston logger is also needed. These parameters are used to initialize the sub-modules.
 
-`onFileAdd = (filePath: string, readStream: Readable, fileWatcher: boolean)`.
+`onFileAdd = (filePath: string, readStream: Readable)`.
 
-Method that is executed when a file is added to the directory being watched. `filePath` is the full path to the added file, and `readStream` is a `Readable` stream of the file data. `fileWatcher` is a `boolean` indicating if the `outputBucket` should be monitored to check if the transcoded files have been added or not. Any file watcher plugins are *required* to provide these. The method uploads the file to the `ingestBucket` specified in the constructor, and dispatches a transcoding job to the MediaConvert endpoint once the upload is completed.
+Method that is executed when a file is added to the directory being watched. `filePath` is the full path to the added file, and `readStream` is a `Readable` stream of the file data. Any file watcher plugins are *required* to provide these. The method uploads the file to the `ingestBucket` specified in the constructor, and dispatches a transcoding job to the MediaConvert endpoint once the upload is completed.
 
 ## `S3Uploader`
 Sub-module that handles uploading files to ingest S3 bucket. It's built on top of `@aws-sdk/lib-storage` in order to upload large files, which is essential for video.
