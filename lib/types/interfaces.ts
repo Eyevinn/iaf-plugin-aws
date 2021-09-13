@@ -4,26 +4,29 @@ import winston from "winston";
 export interface IafUploadModule {
     logger: winston.Logger;
     playlistName: string;
-    onFileAdd(filePath: string, readStream: Readable): any; 
+    onFileAdd(filePath: string, readStream: Readable): any;
+    fileUploadedDelegate: Function;
 }
 
-export interface Uploader{
+export interface Uploader {
     destination: string;
-    logger: winston.Logger
+    outputDestination: string;
+    logger: winston.Logger;
     upload(fileStream: Readable, fileName: String)
+    watcher(target: string): {};
 }
 
 export interface TranscodeDispatcher {
-    encodeParams: any,
-    inputLocation: string
-    outputDestination: string,
+    encodeParams: any;
+    inputLocation: string;
+    outputDestination: string;
     logger: winston.Logger;
     playlistName: string;
-    dispatch(fileName: string): Promise<any>
+    dispatch(fileName: string): Promise<any>;
 }
 
 export interface FileWatcher {
     dirName: String;
     logger: winston.Logger;
-    onAdd(callback: (filePath: string, readStream: Readable) => any)
+    onAdd(callback: (filePath: string, readStream: Readable) => any);
 }

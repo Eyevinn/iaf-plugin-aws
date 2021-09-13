@@ -23,7 +23,7 @@ jest.mock('winston', () => ({
 
 import winston from 'winston'
 
-const uploader = new S3Uploader("bucket1", winston.createLogger());
+const uploader = new S3Uploader("bucket1", "outputBucket1", winston.createLogger());
 
 const mockUploadInstance = {
     done: jest.fn(),
@@ -57,7 +57,6 @@ test("Should resolve on a successful upload", async () => {
     mockUploadInstance.done.mockResolvedValueOnce(mockResp);
     const data = await uploader.upload(mockFile().createReadStream, "filename")
     expect(data).toStrictEqual(mockResp)
-    
 })
 
 test("Should throw errors when upload fails", async () => {

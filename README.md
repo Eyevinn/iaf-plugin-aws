@@ -28,11 +28,11 @@ fileWatcher.onAdd(awsUploader.onFileAdd);
 Default plugin export. This class is plug-and-play with the Ingest Application Framework, as described in the prevous section.
 
 ### Methods
-`constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn:string, playlistName: string, logger: winston.Logger)`
+`constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn:string, playlistName: string, encodeParams: string, logger: winston.Logger)`
 
 Creates a new `AWSUploadModule` object. You need to provide the unique part your mediaconvert endpoint URL, which AWS region it is running in, as well as the name of your ingest and output buckets. You will also need to provide a role ARN, as well as the base name of the generated playlist. A winston logger is also needed. These parameters are used to initialize the sub-modules.
 
-`onFileAdd = (filePath: string, readStream: Readable)`. 
+`onFileAdd = (filePath: string, readStream: Readable)`.
 
 Method that is executed when a file is added to the directory being watched. `filePath` is the full path to the added file, and `readStream` is a `Readable` stream of the file data. Any file watcher plugins are *required* to provide these. The method uploads the file to the `ingestBucket` specified in the constructor, and dispatches a transcoding job to the MediaConvert endpoint once the upload is completed.
 
