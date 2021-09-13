@@ -1,6 +1,6 @@
 {
   "name": "@eyevinn/iaf-plugin-aws",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Eyevinn Ingest Application Framework (IAF) plugin for upload and transcode in AWS",
   "main": "./dist/awsModule.js",
   "types": "./dist/types/awsModule.d.ts",
