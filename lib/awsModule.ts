@@ -8,8 +8,7 @@ import { Readable } from "stream";
 export class AwsUploadModule implements IafUploadModule {
     logger: winston.Logger;
     playlistName: string;
-    outputBucket: string;
-    awsRegion: string;
+    fileName: string;
     uploader: S3Uploader;
     dispatcher: MediaConvertDispatcher;
     fileUploadedDelegate: Function;
@@ -17,9 +16,8 @@ export class AwsUploadModule implements IafUploadModule {
 
     constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, logger: winston.Logger) {
         this.logger = logger;
-        this.outputBucket = outputBucket;
         this.playlistName = playlistName;
-        this.uploader = new S3Uploader(ingestBucket, this.logger);
+        this.uploader = new S3Uploader(ingestBucket, outputBucket, this.logger);
         this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, roleArn, this.playlistName, encodeParams, this.logger);
     }
 
@@ -31,18 +29,20 @@ export class AwsUploadModule implements IafUploadModule {
      * @param readStream Readable stream of the file.
      */
     onFileAdd = (filePath: string, readStream: Readable) => {
-        const fileName = path.basename(filePath);
+        this.fileName = path.basename(filePath);
         try {
-            this.uploader.upload(readStream, fileName).then(() => {
-                this.dispatcher.dispatch(fileName).then(() => {
-                    this.fileUploadedDelegate();
+            this.uploader.upload(readStream, this.fileName).then(() => {
+                this.dispatcher.dispatch(this.fileName).then(() => {
+                    this.uploader.watcher(this.fileName).then((result) => {
+                        this.fileUploadedDelegate(result);
+                    });
                });
             })
         }
         catch (err) {
             this.logger.log({
                 level: "Error",
-                message: `Error when attempting to process file: ${fileName}. Full error: ${err}`,
+                message: `Error when attempting to process file: ${this.fileName}. Full error: ${err}`,
             })
         }
     }
