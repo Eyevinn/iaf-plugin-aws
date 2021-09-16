@@ -60,32 +60,25 @@ export class S3Uploader implements Uploader {
 
     /**
      * Watches for an object to be uploaded to S3
-     * @returns An object with with a bool that is set to true if the manifests have been uploaded successfully
+     * @returns the S3 path to the manifest if it have been uploaded successfully else null
      */
     async watcher(target: string) {
         const client = new S3({}) || new S3Client({});
         const timeout = process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 240;
-        const targets = {
-            hls: `${target}/manifest.m3u8`,
-            dash: `${target}/manifest.mpd`
-        };
-        // Check for HLS and DASH manifest files
-        for (const key in targets) {
-            try {
-                this.logger.log({
-                    level: 'info',
-                    message: `Watching for: ${this.outputDestination}/${targets[key]}`
-                });
-                await waitUntilObjectExists({ client, maxWaitTime: timeout }, { Bucket: this.outputDestination, Key: targets[key] }
-                );
-            } catch (err) {
-                this.logger.log({
-                    level: 'error',
-                    message: `Watcher could not find: ${this.outputDestination}/${targets[key]}`
-                });
-                targets[key] = false;
-            }
+        // Check for HLS manifests
+        try {
+            this.logger.log({
+                level: 'info',
+                message: `Watching for: ${this.outputDestination}/${target}/manifest.m3u8`
+            });
+            await waitUntilObjectExists({ client, maxWaitTime: timeout }, { Bucket: this.outputDestination, Key: `${target}/manifest.m3u8` });
+            return `arn:aws:s3:::${this.outputDestination}/${target}/manifest.m3u8`;
+        } catch (err) {
+            this.logger.log({
+                level: 'error',
+                message: `Watcher could not find: ${this.outputDestination}/${target}/manifest.m3u8`
+            });
+            return null;
         }
-        return targets;
     }
 }
