@@ -72,7 +72,7 @@ export class S3Uploader implements Uploader {
                 message: `Watching for: ${this.outputDestination}/${target}/manifest.m3u8`
             });
             await waitUntilObjectExists({ client, maxWaitTime: timeout }, { Bucket: this.outputDestination, Key: `${target}/manifest.m3u8` });
-            return `arn:aws:s3:::${process.env.OUTPUT_BUCKET}/${target}/manifest.m3u8`;
+            return `arn:aws:s3:::${this.outputDestination}/${target}/manifest.m3u8`;
         } catch (err) {
             this.logger.log({
                 level: 'error',
