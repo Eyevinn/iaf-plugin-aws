@@ -25,7 +25,7 @@ fileWatcher.onAdd(awsUploader.onFileAdd);
 # Plugin Documentation
 
 ## `AWSUploadModule`
-Default plugin export. This class is plug-and-play with the Ingest Application Framework, as described in the prevous section.
+Default plugin export. This class is plug-and-play with the Ingest Application Framework, as described in the previous section.
 
 ### Methods
 `constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn:string, playlistName: string, encodeParams: string, logger: winston.Logger)`

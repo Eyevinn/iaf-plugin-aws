@@ -12,11 +12,13 @@ import winston from "winston";
 export class S3Uploader implements Uploader {
     destination: string;
     outputDestination: string;
+    outputFiles: any;
     logger: winston.Logger;
 
-    constructor(destination: string, outputDestination: string, logger: winston.Logger) {
+    constructor(destination: string, outputDestination: string, outputFiles: {}, logger: winston.Logger) {
         this.destination = destination;
         this.outputDestination = outputDestination;
+        this.outputFiles = outputFiles;
         this.logger = logger;
     }
 
@@ -60,25 +62,38 @@ export class S3Uploader implements Uploader {
 
     /**
      * Watches for an object to be uploaded to S3
-     * @returns the S3 path to the manifest if it have been uploaded successfully else null
+     * @param fileName the name of the file to wait for
+     * @returns An object with the S3 paths to the files if they have been uploaded successfully else null
      */
-    async watcher(target: string) {
-        const client = new S3({}) || new S3Client({});
-        const timeout = process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 240;
-        // Check for HLS manifests
-        try {
+    async watcher(fileName: string) {
+        if (!this.outputFiles) {
             this.logger.log({
                 level: 'info',
-                message: `Watching for: ${this.outputDestination}/${target}/manifest.m3u8`
-            });
-            await waitUntilObjectExists({ client, maxWaitTime: timeout }, { Bucket: this.outputDestination, Key: `${target}/manifest.m3u8` });
-            return `arn:aws:s3:::${this.outputDestination}/${target}/manifest.m3u8`;
-        } catch (err) {
-            this.logger.log({
-                level: 'error',
-                message: `Watcher could not find: ${this.outputDestination}/${target}/manifest.m3u8`
-            });
+                message: `No 'outputFiles' specified abort watcher`
+            })
             return null;
         }
+        const client = new S3({}) || new S3Client({});
+        const timeout = process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 240;
+        let outputsDest = {};
+        for (const file in this.outputFiles) {
+            const key = this.outputFiles[file];
+            const dest = `${this.outputDestination}/${fileName}/${key}`;
+            try {
+                this.logger.log({
+                    level: 'info',
+                    message: `Watching for: ${dest}`
+                });
+                await waitUntilObjectExists({ client, maxWaitTime: timeout }, { Bucket: this.outputDestination, Key: `${fileName}/${key}` });
+                outputsDest[file] = `arn:aws:s3:::${dest}`;
+            } catch (err) {
+                this.logger.log({
+                    level: 'error',
+                    message: `Watcher could not find: ${dest}`
+                });
+                outputsDest[file] = null;
+            }
+        }
+        return outputsDest;
     }
 }
