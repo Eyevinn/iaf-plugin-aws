@@ -13,8 +13,8 @@ export interface Uploader {
     outputDestination: string;
     outputFiles: {};
     logger: winston.Logger;
-    upload(fileStream: Readable, fileName: String)
-    watcher(target: string): {};
+    upload(fileStream: Readable, fileName: string)
+    watcher(fileName: string): {};
 }
 
 export interface TranscodeDispatcher {

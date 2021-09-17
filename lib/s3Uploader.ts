@@ -62,9 +62,10 @@ export class S3Uploader implements Uploader {
 
     /**
      * Watches for an object to be uploaded to S3
-     * @returns the S3 path to the manifest if it have been uploaded successfully else null
+     * @param fileName the name of the file to wait for
+     * @returns An object with the S3 paths to the files if they have been uploaded successfully else null
      */
-    async watcher() {
+    async watcher(fileName: string) {
         if (!this.outputFiles) {
             this.logger.log({
                 level: 'info',
@@ -74,25 +75,25 @@ export class S3Uploader implements Uploader {
         }
         const client = new S3({}) || new S3Client({});
         const timeout = process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 240;
-        let outputs = {};
-
+        let outputsDest = {};
         for (const file in this.outputFiles) {
             const key = this.outputFiles[file];
+            const dest = `${this.outputDestination}/${fileName}/${key}`;
             try {
                 this.logger.log({
                     level: 'info',
-                    message: `Watching for: ${key}`
+                    message: `Watching for: ${dest}`
                 });
-                await waitUntilObjectExists({ client, maxWaitTime: timeout }, { Bucket: this.outputDestination, Key: key });
-                outputs[file] = key;
+                await waitUntilObjectExists({ client, maxWaitTime: timeout }, { Bucket: this.outputDestination, Key: `${fileName}/${key}` });
+                outputsDest[file] = `arn:aws:s3:::${dest}`;
             } catch (err) {
                 this.logger.log({
                     level: 'error',
-                    message: `Watcher could not find: ${key}`
+                    message: `Watcher could not find: ${dest}`
                 });
-                outputs[file] = null;
+                outputsDest[file] = null;
             }
         }
-        return outputs;
+        return outputsDest;
     }
 }
