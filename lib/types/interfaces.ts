@@ -11,6 +11,7 @@ export interface IafUploadModule {
 export interface Uploader {
     destination: string;
     outputDestination: string;
+    outputFiles: {};
     logger: winston.Logger;
     upload(fileStream: Readable, fileName: String)
     watcher(target: string): {};

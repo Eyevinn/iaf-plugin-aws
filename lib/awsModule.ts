@@ -14,10 +14,10 @@ export class AwsUploadModule implements IafUploadModule {
     fileUploadedDelegate: Function;
 
 
-    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, logger: winston.Logger) {
+    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, outputFiles: {}, logger: winston.Logger) {
         this.logger = logger;
         this.playlistName = playlistName;
-        this.uploader = new S3Uploader(ingestBucket, outputBucket, this.logger);
+        this.uploader = new S3Uploader(ingestBucket, outputBucket, outputFiles, this.logger);
         this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, roleArn, this.playlistName, encodeParams, this.logger);
     }
 
@@ -33,7 +33,7 @@ export class AwsUploadModule implements IafUploadModule {
         try {
             this.uploader.upload(readStream, this.fileName).then(() => {
                 this.dispatcher.dispatch(this.fileName).then(() => {
-                    this.uploader.watcher(this.fileName).then((result) => {
+                    this.uploader.watcher().then((result) => {
                         this.fileUploadedDelegate(result);
                     });
                });
