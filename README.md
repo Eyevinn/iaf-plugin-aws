@@ -9,6 +9,7 @@ To install the plugin in your project, run the following command.
 ```
 npm install --save @eyevinn/iaf-plugin-aws
 ```
+Ensure that your [AWS environment variables](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html) are set, including `AWS_REGION`. The plugin needs these environment variables in order to be able to access AWS.
 
 ## Using the module in your application based on Eyevinn IAF
 To use the AWS upload module in your Eyevinn IAF setup, your `index.ts` should look like this:
