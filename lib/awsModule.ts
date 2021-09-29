@@ -47,7 +47,7 @@ export class AwsUploadModule implements IafUploadModule {
                                 });
                             } else if (job.Status === "ERROR") {
                                 this.logger.log({
-                                    level: "warn",
+                                    level: "error",
                                     message: `MediaConvert job failed, retrying job!`,
                                 });
                                 this.dispatcher.dispatch(this.fileName).then(() => {
