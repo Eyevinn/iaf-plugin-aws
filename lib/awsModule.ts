@@ -29,7 +29,6 @@ export class AwsUploadModule implements IafUploadModule {
      * @param readStream Readable stream of the file.
      */
     onFileAdd = (filePath: string, readStream: Readable) => {
-        let RETRIES = 2;
         this.fileName = path.basename(filePath);
         try {
             this.uploader.upload(readStream, this.fileName).then(() => {
