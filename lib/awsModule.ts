@@ -42,7 +42,6 @@ export class AwsUploadModule implements IafUploadModule {
                                 });
                                 this.uploader.watcher(this.fileName).then((result) => {
                                     this.fileUploadedDelegate(result);
-                                    return;
                                 });
                             } else if (job.Status === "ERROR") {
                                 this.logger.log({
@@ -56,7 +55,6 @@ export class AwsUploadModule implements IafUploadModule {
                                 });
                             } else {
                                 this.fileUploadedDelegate(result);
-                                return;
                             }
                         });
                     });
