@@ -32,18 +32,40 @@ export class AwsUploadModule implements IafUploadModule {
         this.fileName = path.basename(filePath);
         try {
             this.uploader.upload(readStream, this.fileName).then(() => {
-                this.dispatcher.dispatch(this.fileName).then(() => {
+                this.dispatcher.dispatch(this.fileName).then((data) => {
                     this.uploader.watcher(this.fileName).then((result) => {
-                        this.fileUploadedDelegate(result);
+                        this.dispatcher.getJob(data.Job.Id).then((job) => {
+                            if (job.Status === "SUBMITTED" || job.Status === "PROGRESSING") {
+                                this.logger.log({
+                                    level: "warn",
+                                    message: "MediaConvert job did not complete before the watcher timed out, continue to watch for transcoded files!",
+                                });
+                                this.uploader.watcher(this.fileName).then((result) => {
+                                    this.fileUploadedDelegate(result);
+                                });
+                            } else if (job.Status === "ERROR") {
+                                this.logger.log({
+                                    level: "error",
+                                    message: `MediaConvert job failed, retrying job!`,
+                                });
+                                this.dispatcher.dispatch(this.fileName).then(() => {
+                                    this.uploader.watcher(this.fileName).then((output) => {
+                                        this.fileUploadedDelegate(output);
+                                    });
+                                });
+                            } else {
+                                this.fileUploadedDelegate(result);
+                            }
+                        });
                     });
-               });
-            })
+                });
+            });
         }
         catch (err) {
             this.logger.log({
-                level: "Error",
+                level: "error",
                 message: `Error when attempting to process file: ${this.fileName}. Full error: ${err}`,
-            })
+            });
         }
     }
 }
