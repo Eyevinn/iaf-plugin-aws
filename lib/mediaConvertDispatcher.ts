@@ -1,4 +1,4 @@
-import { CreateJobCommand, MediaConvertClient } from "@aws-sdk/client-mediaconvert";
+import { CreateJobCommand, MediaConvertClient, GetJobCommand } from "@aws-sdk/client-mediaconvert";
 import { toPascalCase } from "./utils/stringManipulations";
 import { TranscodeDispatcher } from "./types/interfaces";
 import * as fs from "fs";
@@ -71,7 +71,28 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
         catch (err) {
             this.logger.log({
                 level: 'error',
-                message: `Failed to create a transcoding job for ${fileName}! `
+                message: `Failed to create a transcoding job for ${fileName}!`
+            })
+            throw err;
+        }
+    }
+
+    /**
+     * Get a transcode job from a MediaConvert instance
+     * @param jobId the ID of the job to get
+     * @returns the response from AWS.
+     */
+    async getJob(jobId: string) {
+        try {
+            const resp = await this.mediaConverterClient.send(new GetJobCommand({
+                Id: jobId
+            }));
+            return resp.Job;
+        }
+        catch (err) {
+            this.logger.log({
+                level: 'error',
+                message: `Failed to get the transcoding job for ID ${jobId} from MediaConvert!`
             })
             throw err;
         }

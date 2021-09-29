@@ -24,6 +24,7 @@ export interface TranscodeDispatcher {
     logger: winston.Logger;
     playlistName: string;
     dispatch(fileName: string): Promise<any>;
+    getJob(jobId: string): Promise<any>;
 }
 
 export interface FileWatcher {
