@@ -4,6 +4,7 @@ import { IafUploadModule } from './types/interfaces'
 import { MediaConvertDispatcher } from "./mediaConvertDispatcher";
 import { S3Uploader } from "./s3Uploader";
 import { Readable } from "stream";
+import { nanoid } from "nanoid";
 
 export class AwsUploadModule implements IafUploadModule {
     logger: winston.Logger;
@@ -29,7 +30,8 @@ export class AwsUploadModule implements IafUploadModule {
      * @param readStream Readable stream of the file.
      */
     onFileAdd = (filePath: string, readStream: Readable) => {
-        this.fileName = path.basename(filePath);
+        let file = path.basename(filePath);
+        this.fileName = `${path.parse(file).name}-${nanoid(10)}${path.parse(file).ext}`;
         try {
             this.uploader.upload(readStream, this.fileName).then(() => {
                 this.dispatcher.dispatch(this.fileName).then((data) => {
