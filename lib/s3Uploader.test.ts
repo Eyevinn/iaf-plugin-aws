@@ -23,7 +23,7 @@ jest.mock('winston', () => ({
 
 import winston from 'winston'
 
-const uploader = new S3Uploader("bucket1", "outputBucket1", {}, winston.createLogger());
+const uploader = new S3Uploader("bucket1", "outputBucket1", "testRegion1", {}, winston.createLogger());
 
 const mockUploadInstance = {
     done: jest.fn(),
