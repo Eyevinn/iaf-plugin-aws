@@ -1,24 +1,26 @@
 import { Uploader } from "./types/interfaces";
 import { Upload } from "@aws-sdk/lib-storage";
-import { S3Client, S3, waitUntilObjectExists } from "@aws-sdk/client-s3";
+import { S3Client, S3, waitUntilObjectExists, S3ClientConfig } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import winston from "winston";
 
 
 /**
  * S3 Uploader class
- * Holds the S3 client that data will be piped through for upload to ingest bucket 
+ * Holds the S3 client that data will be piped through for upload to ingest bucket
  */
 export class S3Uploader implements Uploader {
     destination: string;
     outputDestination: string;
     outputFiles: any;
+    region: string;
     logger: winston.Logger;
 
-    constructor(destination: string, outputDestination: string, outputFiles: {}, logger: winston.Logger) {
+    constructor(destination: string, outputDestination: string, awsRegion: string, outputFiles: {}, logger: winston.Logger) {
         this.destination = destination;
         this.outputDestination = outputDestination;
         this.outputFiles = outputFiles;
+        this.region = awsRegion;
         this.logger = logger;
     }
 
@@ -29,6 +31,7 @@ export class S3Uploader implements Uploader {
      * @returns status report from the AWS upload
      */
     async upload(fileStream: Readable, fileName: string) {
+        const config: S3ClientConfig = { region: this.region };
         const target = {
             Bucket: this.destination,
             Key: fileName,
@@ -37,7 +40,7 @@ export class S3Uploader implements Uploader {
 
         try {
             const parallelUploadsToS3 = new Upload({
-                client: new S3({}) || new S3Client({}),
+                client: new S3(config) || new S3Client(config),
                 params: target
             })
 
@@ -73,7 +76,8 @@ export class S3Uploader implements Uploader {
             })
             return null;
         }
-        const client = new S3({}) || new S3Client({});
+        const config: S3ClientConfig = { region: this.region };
+        const client = new S3(config) || new S3Client(config);
         const timeout = process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 240;
         let outputsDest = {};
         for (const file in this.outputFiles) {
