@@ -1,10 +1,10 @@
 import winston from "winston";
 import * as path from 'path'
-import { IafUploadModule } from './types/interfaces'
 import { MediaConvertDispatcher } from "./mediaConvertDispatcher";
 import { S3Uploader } from "./s3Uploader";
 import { Readable } from "stream";
 import { nanoid } from "nanoid";
+import { IafUploadModule } from "eyevinn-iaf";
 
 export class AwsUploadModule implements IafUploadModule {
     logger: winston.Logger;
@@ -12,7 +12,8 @@ export class AwsUploadModule implements IafUploadModule {
     fileName: string;
     uploader: S3Uploader;
     dispatcher: MediaConvertDispatcher;
-    fileUploadedDelegate: Function;
+    fileUploadedDelegate: (result: any) => any;
+    progressDelegate: (result: any) => any;
 
 
     constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, outputFiles: {}, logger: winston.Logger) {
