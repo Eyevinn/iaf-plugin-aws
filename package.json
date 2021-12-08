@@ -1,6 +1,6 @@
 {
   "name": "@eyevinn/iaf-plugin-aws",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Eyevinn Ingest Application Framework (IAF) plugin for upload and transcode in AWS",
   "main": "./dist/awsModule.js",
   "types": "./dist/types/awsModule.d.ts",
@@ -20,7 +20,8 @@
   },
   "contributors": [
     "Jonas Birmé <jonas.birme@eyevinn.se> (Eyevinn Technology AB)",
-    "Fredrik Lundkvist <fredrik.lundkvist@eyevinn.se> (Eyevinn Technology AB)"
+    "Fredrik Lundkvist <fredrik.lundkvist@eyevinn.se> (Eyevinn Technology AB)",
+    "Oscar Nord <oscar.nord@eyevinn.se> (Eyevinn Technology AB)"
   ],
   "keywords": [
     "aws",
