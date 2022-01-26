@@ -16,10 +16,10 @@ export class AwsUploadModule implements IafUploadModule {
     progressDelegate: (result: any) => any;
 
 
-    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, outputFiles: {}, logger: winston.Logger) {
+    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, outputFiles: {}, logger: winston.Logger, watcherTimeout?: number) {
         this.logger = logger;
         this.playlistName = playlistName;
-        this.uploader = new S3Uploader(ingestBucket, outputBucket, awsRegion, outputFiles, this.logger);
+        this.uploader = new S3Uploader(ingestBucket, outputBucket, awsRegion, outputFiles, this.logger, watcherTimeout);
         this.dispatcher = new MediaConvertDispatcher(mediaConvertEndpoint, awsRegion, ingestBucket, outputBucket, roleArn, this.playlistName, encodeParams, this.logger);
     }
 
