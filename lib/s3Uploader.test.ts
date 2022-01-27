@@ -59,6 +59,18 @@ test("Should resolve on a successful upload", async () => {
     expect(data).toStrictEqual(mockResp)
 })
 
+test("Should resolve on a successful upload with a specific watcher timer", async () => {
+    const uploaderWithTimer = new S3Uploader("bucket1", "outputBucket1", "testRegion1", {}, winston.createLogger(), 300);
+    const mockResp = {
+        '$metadata': {
+            attempts: 1
+        }
+    }
+    mockUploadInstance.done.mockResolvedValueOnce(mockResp);
+    const data = await uploaderWithTimer.upload(mockFile().createReadStream, "filename")
+    expect(data).toStrictEqual(mockResp)
+})
+
 test("Should throw errors when upload fails", async () => {
     const mockErr = "Failed to upload file!"
     mockUploadInstance.done.mockRejectedValueOnce(new Error(mockErr))

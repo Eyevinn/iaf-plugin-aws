@@ -6,6 +6,7 @@ export interface Uploader {
     outputDestination: string;
     outputFiles: {};
     region: string;
+    timeout: number;
     logger: winston.Logger;
     upload(fileStream: Readable, fileName: string)
     watcher(fileName: string): {};

@@ -14,14 +14,20 @@ export class S3Uploader implements Uploader {
     outputDestination: string;
     outputFiles: any;
     region: string;
+    timeout: number;
     logger: winston.Logger;
 
-    constructor(destination: string, outputDestination: string, awsRegion: string, outputFiles: {}, logger: winston.Logger) {
+    constructor(destination: string, outputDestination: string, awsRegion: string, outputFiles: {}, logger: winston.Logger, watcherTimeout?: number) {
         this.destination = destination;
         this.outputDestination = outputDestination;
         this.outputFiles = outputFiles;
         this.region = awsRegion;
         this.logger = logger;
+        if(!watcherTimeout) {
+            this.timeout = process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 300;
+        } else {
+            this.timeout = watcherTimeout;
+        }
     }
 
     /**
@@ -78,7 +84,6 @@ export class S3Uploader implements Uploader {
         }
         const config: S3ClientConfig = { region: this.region };
         const client = new S3(config) || new S3Client(config);
-        const timeout = process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 240;
         let outputsDest = {};
         for (const file in this.outputFiles) {
             const key = this.outputFiles[file];
@@ -88,7 +93,7 @@ export class S3Uploader implements Uploader {
                     level: 'info',
                     message: `Watching for: ${dest}`
                 });
-                await waitUntilObjectExists({ client, maxWaitTime: timeout }, { Bucket: this.outputDestination, Key: `${fileName}/${key}` });
+                await waitUntilObjectExists({ client, maxWaitTime: this.timeout}, { Bucket: this.outputDestination, Key: `${fileName}/${key}` });
                 outputsDest[file] = `arn:aws:s3:::${dest}`;
             } catch (err) {
                 this.logger.log({
