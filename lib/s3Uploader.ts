@@ -2,7 +2,7 @@ import { Uploader } from "./types/interfaces";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client, S3, waitUntilObjectExists, S3ClientConfig } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
-import AbstractLogger from "./utils/logger";
+import { Logger } from "eyevinn-iaf";
 
 
 /**
@@ -15,9 +15,9 @@ export class S3Uploader implements Uploader {
     outputFiles: any;
     region: string;
     timeout: number;
-    logger: AbstractLogger;
+    logger: Logger;
 
-    constructor(destination: string, outputDestination: string, awsRegion: string, outputFiles: {}, logger: AbstractLogger, watcherTimeout?: number) {
+    constructor(destination: string, outputDestination: string, awsRegion: string, outputFiles: {}, logger: Logger, watcherTimeout?: number) {
         this.destination = destination;
         this.outputDestination = outputDestination;
         this.outputFiles = outputFiles;

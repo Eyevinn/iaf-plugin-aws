@@ -1,5 +1,5 @@
 import { Readable } from "stream";
-import AbstractLogger from "../utils/logger";
+import { Logger } from "eyevinn-iaf";
 
 export interface Uploader {
     destination: string;
@@ -7,7 +7,7 @@ export interface Uploader {
     outputFiles: {};
     region: string;
     timeout: number;
-    logger: AbstractLogger;
+    logger: Logger;
     upload(fileStream: Readable, fileName: string)
     watcher(fileName: string): {};
 }
@@ -16,7 +16,7 @@ export interface TranscodeDispatcher {
     encodeParams: any;
     inputLocation: string;
     outputDestination: string;
-    logger: AbstractLogger;
+    logger: Logger;
     playlistName: string;
     dispatch(fileName: string): Promise<any>;
     getJob(jobId: string): Promise<any>;

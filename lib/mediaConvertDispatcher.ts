@@ -3,7 +3,7 @@ import { toPascalCase } from "./utils/stringManipulations";
 import { TranscodeDispatcher } from "./types/interfaces";
 import * as fs from "fs";
 import * as path from "path"
-import AbstractLogger from "./utils/logger";
+import { Logger } from "eyevinn-iaf";
 
 
 export class MediaConvertDispatcher implements TranscodeDispatcher {
@@ -14,7 +14,7 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
     outputDestination: string;
     roleArn: string;
     playlistName: string;
-    logger: AbstractLogger;
+    logger: Logger;
 
     /**
      * Initializes a MediaConvertDispatcher
@@ -27,7 +27,7 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
      * @param encodeParams the parameters to be used for the transcoding job
      * @param logger a logger object
      */
-    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, encodeParams: string, logger: AbstractLogger) {
+    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, encodeParams: string, logger: Logger) {
         this.inputLocation = inputLocation;
         this.outputDestination = outputDestination;
         this.mediaConverterEndpoint = { endpoint: `https://${mediaConvertEndpoint}.mediaconvert.${region}.amazonaws.com` };

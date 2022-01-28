@@ -4,10 +4,10 @@ import { S3Uploader } from "./s3Uploader";
 import { Readable } from "stream";
 import { nanoid } from "nanoid";
 import { IafUploadModule } from "eyevinn-iaf";
-import AbstractLogger from "./utils/logger";
+import { Logger } from "eyevinn-iaf";
 
 export class AwsUploadModule implements IafUploadModule {
-    logger: AbstractLogger;
+    logger: Logger;
     playlistName: string;
     fileName: string;
     uploader: S3Uploader;
@@ -16,7 +16,7 @@ export class AwsUploadModule implements IafUploadModule {
     progressDelegate: (result: any) => any;
 
 
-    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, outputFiles: {}, logger: AbstractLogger, watcherTimeout?: number) {
+    constructor(mediaConvertEndpoint: string, awsRegion: string, ingestBucket: string, outputBucket: string, roleArn: string, playlistName: string, encodeParams: string, outputFiles: {}, logger: Logger, watcherTimeout?: number) {
         this.logger = logger;
         this.playlistName = playlistName;
         this.uploader = new S3Uploader(ingestBucket, outputBucket, awsRegion, outputFiles, this.logger, watcherTimeout);
