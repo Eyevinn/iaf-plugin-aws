@@ -3,7 +3,7 @@ import { toPascalCase } from "./utils/stringManipulations";
 import { TranscodeDispatcher } from "./types/interfaces";
 import * as fs from "fs";
 import * as path from "path"
-import winston from "winston";
+import AbstractLogger from "./utils/logger";
 
 
 export class MediaConvertDispatcher implements TranscodeDispatcher {
@@ -14,7 +14,7 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
     outputDestination: string;
     roleArn: string;
     playlistName: string;
-    logger: winston.Logger;
+    logger: AbstractLogger;
 
     /**
      * Initializes a MediaConvertDispatcher
@@ -27,12 +27,10 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
      * @param encodeParams the parameters to be used for the transcoding job
      * @param logger a logger object
      */
-    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, encodeParams: string, logger: winston.Logger) {
+    constructor(mediaConvertEndpoint: string, region: string, inputLocation: string, outputDestination: string, roleArn: string, playlistName: string, encodeParams: string, logger: AbstractLogger) {
         this.inputLocation = inputLocation;
         this.outputDestination = outputDestination;
-        this.mediaConverterEndpoint = {
-            endpoint: `https://${mediaConvertEndpoint}.mediaconvert.${region}.amazonaws.com`
-        }
+        this.mediaConverterEndpoint = { endpoint: `https://${mediaConvertEndpoint}.mediaconvert.${region}.amazonaws.com` };
         this.roleArn = roleArn;
         this.playlistName = playlistName;
         this.logger = logger;
@@ -62,17 +60,11 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
 
         try {
             const data = await this.mediaConverterClient.send(new CreateJobCommand(this.encodeParams));
-            this.logger.log({
-                level: 'info',
-                message: `Transcoding job created for ${fileName}. Job ID: ${data.Job.Id}`
-            })
+            this.logger.info(`Transcoding job created for ${fileName}. Job ID: ${data.Job.Id}`);
             return data;
         }
         catch (err) {
-            this.logger.log({
-                level: 'error',
-                message: `Failed to create a transcoding job for ${fileName}!`
-            })
+            this.logger.error(`Failed to create a transcoding job for ${fileName}!`);
             throw err;
         }
     }
@@ -84,16 +76,11 @@ export class MediaConvertDispatcher implements TranscodeDispatcher {
      */
     async getJob(jobId: string) {
         try {
-            const resp = await this.mediaConverterClient.send(new GetJobCommand({
-                Id: jobId
-            }));
+            const resp = await this.mediaConverterClient.send(new GetJobCommand({ Id: jobId }));
             return resp.Job;
         }
         catch (err) {
-            this.logger.log({
-                level: 'error',
-                message: `Failed to get the transcoding job for ID ${jobId} from MediaConvert!`
-            })
+            this.logger.error(`Failed to get the transcoding job for ID ${jobId} from MediaConvert!`);
             throw err;
         }
     }
