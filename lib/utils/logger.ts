@@ -2,14 +2,13 @@ import { Logger } from "eyevinn-iaf";
 
 export default class AbstractLogger implements Logger {
     Colors = {
-        error: "\x1b[31m",
-        info: "\x1b[32m",
-        warn: "\x1b[33m",
-        verbose: "\x1b[37m",
+        error: "\x1b[31m",   // red
+        info: "\x1b[32m",    // green
+        warn: "\x1b[33m",    // yellow
+        verbose: "\x1b[37m", // white
     };
 
     private logger(level: string, message: string) {
-        if (level === 'verbose' && process.env.NODE_ENV !== 'development') return;
         console.log(`${this.Colors[level]}%s`, `${level}: ${message}`);
     }
 
