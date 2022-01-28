@@ -25,6 +25,6 @@ export default class AbstractLogger implements Logger {
     }
 
     error(message: string) {
-        this.logger('error', message);
+        console.error(message);
     }
 }
