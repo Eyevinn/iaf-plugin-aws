@@ -1,15 +1,12 @@
 import { mockClient } from 'aws-sdk-client-mock';
 import { CreateJobCommand, GetJobCommand, MediaConvertClient } from '@aws-sdk/client-mediaconvert';
 import { MediaConvertDispatcher } from './mediaConvertDispatcher';
-import winston from 'winston';
 import * as fs from 'fs';
-const mockLogInstance = {
-    debug: jest.fn(),
-    log: jest.fn()
-}
+import AbstractLogger from './utils/logger';
 
 jest.mock('fs')
 
+const logger = new AbstractLogger();
 const mockParams = {
     "Settings": {
         "Inputs": [
@@ -169,28 +166,11 @@ const getJob = {
   },
 };
 
-jest.mock('winston', () => ({
-    format: {
-        colorize: jest.fn(),
-        combine: jest.fn(),
-        label: jest.fn(),
-        timestamp: jest.fn(),
-        printf: jest.fn()
-    },
-    createLogger: jest.fn().mockImplementation(() => mockLogInstance),
-    transports: {
-        Console: jest.fn()
-    }
-}))
-
 jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(mockParams))
 const mcMock = mockClient(MediaConvertClient);
-const dispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", "fakeARN", "playlistName", null, winston.createLogger());
-
-
+const dispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", "fakeARN", "playlistName", null, logger);
 
 beforeEach(() => {
-    const logger = winston.createLogger();
     mcMock.reset();
 });
 
@@ -214,7 +194,7 @@ test("Should return transcoding job data on successful dispatch", async () => {
 
 test("Should return transcoding job data on successful dispatch with custom encodeParams", async () => {
     let encodeParams = JSON.stringify(mockParams);
-    const customDispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", "fakeARN", "playlistName", encodeParams, winston.createLogger());
+    const customDispatcher = new MediaConvertDispatcher("testString1", "testRegion1", "inputBucket", "outputBucket", "fakeARN", "playlistName", encodeParams, logger);
     const mockResp = {
         "$metadata": {
             httpStatusCode: 201

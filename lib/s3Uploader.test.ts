@@ -1,29 +1,10 @@
 
 import { S3Uploader } from "./s3Uploader";
 import { Readable } from "stream";
+import AbstractLogger from "./utils/logger";
 
-const mockLogInstance = {
-    debug: jest.fn(),
-    log: jest.fn()
-}
-
-jest.mock('winston', () => ({
-    format: {
-        colorize: jest.fn(),
-        combine: jest.fn(),
-        label: jest.fn(),
-        timestamp: jest.fn(),
-        printf: jest.fn()
-      },
-      createLogger: jest.fn().mockImplementation(() => mockLogInstance),
-      transports: {
-        Console: jest.fn()
-      }
-}))
-
-import winston from 'winston'
-
-const uploader = new S3Uploader("bucket1", "outputBucket1", "testRegion1", {}, winston.createLogger());
+const logger = new AbstractLogger();
+const uploader = new S3Uploader("bucket1", "outputBucket1", "testRegion1", {}, logger);
 
 const mockUploadInstance = {
     done: jest.fn(),
@@ -60,7 +41,7 @@ test("Should resolve on a successful upload", async () => {
 })
 
 test("Should resolve on a successful upload with a specific watcher timer", async () => {
-    const uploaderWithTimer = new S3Uploader("bucket1", "outputBucket1", "testRegion1", {}, winston.createLogger(), 300);
+    const uploaderWithTimer = new S3Uploader("bucket1", "outputBucket1", "testRegion1", {}, logger, 300);
     const mockResp = {
         '$metadata': {
             attempts: 1
